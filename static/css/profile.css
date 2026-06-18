@@ -1,0 +1,293 @@
+/* ------------------------------------------------------------------ */
+/* Category colour tokens                                              */
+/* ------------------------------------------------------------------ */
+
+:root {
+    --cat-transport:     #3b6fa0;
+    --cat-transport-bg:  #e8eef5;
+    --cat-health:        #7b4fa0;
+    --cat-health-bg:     #f0eaf5;
+    --cat-shopping:      #2e7d5e;
+    --cat-shopping-bg:   #e8f5f0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout                                                              */
+/* ------------------------------------------------------------------ */
+
+.profile-page {
+    padding: 3rem 2rem 6rem;
+}
+
+.profile-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Shared card shell                                                   */
+/* ------------------------------------------------------------------ */
+
+.profile-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.profile-card-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+/* ------------------------------------------------------------------ */
+/* Section 1 — User info card                                         */
+/* ------------------------------------------------------------------ */
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.user-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+}
+
+.user-email {
+    font-size: 0.9rem;
+    color: var(--ink-muted);
+    margin-bottom: 0.25rem;
+}
+
+.user-since {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+}
+
+/* ------------------------------------------------------------------ */
+/* Section 2 — Summary stats row                                      */
+/* ------------------------------------------------------------------ */
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.stat-cell {
+    background: var(--paper-card);
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.stat-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-value--accent {
+    color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Section 3 — Transaction history table                              */
+/* ------------------------------------------------------------------ */
+
+.txn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.txn-table thead tr {
+    border-bottom: 2px solid var(--border);
+}
+
+.txn-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 0 0 0.75rem;
+}
+
+.txn-table th:last-child,
+.txn-table td:last-child {
+    text-align: right;
+}
+
+.txn-table tbody tr {
+    border-bottom: 1px solid var(--border-soft);
+    transition: background 0.15s;
+}
+
+.txn-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.txn-table tbody tr:hover {
+    background: var(--paper-warm);
+}
+
+.txn-table td {
+    padding: 0.9rem 0;
+    color: var(--ink-soft);
+    vertical-align: middle;
+}
+
+.txn-date {
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    width: 120px;
+}
+
+.txn-desc {
+    color: var(--ink);
+    font-weight: 500;
+}
+
+.txn-amount {
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+/* Category badges */
+
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.badge--food          { background: var(--accent-light);   color: var(--accent); }
+.badge--transport     { background: var(--cat-transport-bg); color: var(--cat-transport); }
+.badge--bills         { background: var(--accent-2-light); color: var(--accent-2); }
+.badge--health        { background: var(--cat-health-bg);  color: var(--cat-health); }
+.badge--entertainment { background: var(--danger-light);   color: var(--danger); }
+.badge--shopping      { background: var(--cat-shopping-bg); color: var(--cat-shopping); }
+.badge--other         { background: var(--paper-warm);     color: var(--ink-muted); }
+
+/* ------------------------------------------------------------------ */
+/* Section 4 — Category breakdown                                     */
+/* ------------------------------------------------------------------ */
+
+.breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.breakdown-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 80px;
+    align-items: center;
+    gap: 1rem;
+}
+
+.breakdown-cat {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+}
+
+.breakdown-track {
+    height: 8px;
+    background: var(--border-soft);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.breakdown-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.6s ease;
+}
+
+.breakdown-bar--transport     { background: var(--cat-transport); }
+.breakdown-bar--bills         { background: var(--accent-2); }
+.breakdown-bar--health        { background: var(--cat-health); }
+.breakdown-bar--entertainment { background: var(--danger); }
+.breakdown-bar--shopping      { background: var(--cat-shopping); }
+.breakdown-bar--other         { background: var(--ink-faint); }
+
+.breakdown-amt {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 700px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .breakdown-row {
+        grid-template-columns: 90px 1fr 70px;
+        gap: 0.6rem;
+    }
+
+    .txn-date {
+        display: none;
+    }
+}

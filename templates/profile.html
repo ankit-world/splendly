@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Profile — Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-inner">
+
+        {# ---------------------------------------------------------- #}
+        {# Section 1 — User info card                                 #}
+        {# ---------------------------------------------------------- #}
+        <div class="profile-card">
+            <div class="user-info">
+                <div class="user-avatar">{{ user.initials }}</div>
+                <div>
+                    <div class="user-name">{{ user.name }}</div>
+                    <div class="user-email">{{ user.email }}</div>
+                    <div class="user-since">Member since {{ user.member_since }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# ---------------------------------------------------------- #}
+        {# Section 2 — Summary stats row                              #}
+        {# ---------------------------------------------------------- #}
+        <div class="stats-row">
+            <div class="stat-cell">
+                <span class="stat-label">Total Spent</span>
+                <span class="stat-value">₹{{ "%.2f"|format(stats.total_spent) }}</span>
+            </div>
+            <div class="stat-cell">
+                <span class="stat-label">Transactions</span>
+                <span class="stat-value">{{ stats.transaction_count }}</span>
+            </div>
+            <div class="stat-cell">
+                <span class="stat-label">Top Category</span>
+                <span class="stat-value stat-value--accent">{{ stats.top_category }}</span>
+            </div>
+        </div>
+
+        {# ---------------------------------------------------------- #}
+        {# Section 3 — Transaction history                            #}
+        {# ---------------------------------------------------------- #}
+        <div class="profile-card">
+            <div class="profile-card-title">Transaction History</div>
+            <table class="txn-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                    <tr>
+                        <td class="txn-date">{{ txn.date }}</td>
+                        <td class="txn-desc">{{ txn.description }}</td>
+                        <td>
+                            <span class="badge badge--{{ txn.category | lower }}">
+                                {{ txn.category }}
+                            </span>
+                        </td>
+                        <td class="txn-amount">₹{{ "%.2f"|format(txn.amount) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {# ---------------------------------------------------------- #}
+        {# Section 4 — Category breakdown                             #}
+        {# ---------------------------------------------------------- #}
+        <div class="profile-card">
+            <div class="profile-card-title">Spending by Category</div>
+            <div class="breakdown-list">
+                {% for cat in categories %}
+                <div class="breakdown-row">
+                    <span class="breakdown-cat">{{ cat.name }}</span>
+                    <div class="breakdown-track">
+                        <div class="breakdown-bar breakdown-bar--{{ cat.name | lower }}"
+                             style="width: {{ cat.pct }}%"></div>
+                    </div>
+                    <span class="breakdown-amt">₹{{ "%.2f"|format(cat.amount) }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>lucide.createIcons();</script>
+{% endblock %}
