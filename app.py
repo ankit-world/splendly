@@ -2,6 +2,12 @@ import sqlite3
 from flask import Flask, render_template, request, flash, redirect, url_for, abort, session
 from werkzeug.security import check_password_hash
 from database.db import get_db, init_db, seed_db, create_user, get_user_by_email, get_user_by_id
+from database.queries import (
+    get_user_by_id as get_user_profile,
+    get_summary_stats,
+    get_recent_transactions,
+    get_category_breakdown,
+)
 
 app = Flask(__name__)
 app.secret_key = "spendly-dev-secret"  # TODO: replace with env var before production
@@ -106,46 +112,15 @@ def profile():
     if not session.get("user_id"):
         return redirect(url_for("login"))
 
-    db_user = get_user_by_id(session["user_id"])
-    if db_user is None:
+    user_id = session["user_id"]
+    if get_user_by_id(user_id) is None:
         session.clear()
         return redirect(url_for("login"))
 
-    name = db_user["name"]
-    parts = name.split()
-    initials = (parts[0][0] + parts[-1][0]).upper() if len(parts) > 1 else parts[0][:2].upper()
-    member_since = db_user["created_at"][:7]  # "YYYY-MM"
-
-    user = {
-        "name":         name,
-        "email":        db_user["email"],
-        "member_since": member_since,
-        "initials":     initials,
-    }
-    stats = {
-        "total_spent":       3550.0,
-        "transaction_count": 8,
-        "top_category":      "Bills",
-    }
-    transactions = [
-        {"date": "Jun 17, 2026", "description": "Restaurant dinner",  "category": "Food",          "amount": 180.0},
-        {"date": "Jun 14, 2026", "description": "Miscellaneous",       "category": "Other",         "amount": 60.0},
-        {"date": "Jun 12, 2026", "description": "Clothes",             "category": "Shopping",      "amount": 890.0},
-        {"date": "Jun 10, 2026", "description": "Movie tickets",       "category": "Entertainment", "amount": 250.0},
-        {"date": "Jun 07, 2026", "description": "Pharmacy",            "category": "Health",        "amount": 500.0},
-        {"date": "Jun 05, 2026", "description": "Electricity bill",    "category": "Bills",         "amount": 1200.0},
-        {"date": "Jun 03, 2026", "description": "Metro pass",          "category": "Transport",     "amount": 150.0},
-        {"date": "Jun 01, 2026", "description": "Groceries",           "category": "Food",          "amount": 320.0},
-    ]
-    categories = [
-        {"name": "Bills",         "amount": 1200.0, "pct": 33.8},
-        {"name": "Shopping",      "amount": 890.0,  "pct": 25.1},
-        {"name": "Health",        "amount": 500.0,  "pct": 14.1},
-        {"name": "Food",          "amount": 500.0,  "pct": 14.1},
-        {"name": "Entertainment", "amount": 250.0,  "pct": 7.0},
-        {"name": "Transport",     "amount": 150.0,  "pct": 4.2},
-        {"name": "Other",         "amount": 60.0,   "pct": 1.7},
-    ]
+    user         = get_user_profile(user_id)
+    stats        = get_summary_stats(user_id)
+    transactions = get_recent_transactions(user_id)
+    categories   = get_category_breakdown(user_id)
     return render_template(
         "profile.html",
         user=user,
