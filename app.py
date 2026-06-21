@@ -1,7 +1,10 @@
+import os
 import sqlite3
+from datetime import date
 from flask import Flask, render_template, request, flash, redirect, url_for, abort, session
 from werkzeug.security import check_password_hash
 from database.db import get_db, init_db, seed_db, create_user, get_user_by_email, get_user_by_id
+from database.helpers import parse_date, months_ago
 from database.queries import (
     get_user_by_id as get_user_profile,
     get_summary_stats,
@@ -10,7 +13,7 @@ from database.queries import (
 )
 
 app = Flask(__name__)
-app.secret_key = "spendly-dev-secret"  # TODO: replace with env var before production
+app.secret_key = os.environ.get("SECRET_KEY", "spendly-dev-secret")
 
 with app.app_context():
     init_db()
@@ -117,16 +120,38 @@ def profile():
         session.clear()
         return redirect(url_for("login"))
 
+    date_from = parse_date(request.args.get("date_from"))
+    date_to   = parse_date(request.args.get("date_to"))
+
+    if date_from and date_to and date_from > date_to:
+        flash("Start date must be before end date.")
+        date_from = date_to = None
+
+    date_from_str = date_from.isoformat() if date_from else None
+    date_to_str   = date_to.isoformat()   if date_to   else None
+
+    today          = date.today()
+    first_of_month = today.replace(day=1)
+    presets = [
+        {"label": "This Month",    "date_from": first_of_month.isoformat(),         "date_to": today.isoformat()},
+        {"label": "Last 3 Months", "date_from": months_ago(today, 3).isoformat(),   "date_to": today.isoformat()},
+        {"label": "Last 6 Months", "date_from": months_ago(today, 6).isoformat(),   "date_to": today.isoformat()},
+        {"label": "All Time",      "date_from": None,                               "date_to": None},
+    ]
+
     user         = get_user_profile(user_id)
-    stats        = get_summary_stats(user_id)
-    transactions = get_recent_transactions(user_id)
-    categories   = get_category_breakdown(user_id)
+    stats        = get_summary_stats(user_id, date_from=date_from_str, date_to=date_to_str)
+    transactions = get_recent_transactions(user_id, date_from=date_from_str, date_to=date_to_str)
+    categories   = get_category_breakdown(user_id, date_from=date_from_str, date_to=date_to_str)
     return render_template(
         "profile.html",
         user=user,
         stats=stats,
         transactions=transactions,
         categories=categories,
+        date_from=date_from_str or "",
+        date_to=date_to_str or "",
+        presets=presets,
     )
 
 
@@ -146,4 +171,5 @@ def delete_expense(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(debug=debug, port=5001)

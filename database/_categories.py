@@ -1,12 +1,16 @@
 from database.db import get_db
+from database.helpers import date_filter_clause
 
 
-def get_category_breakdown(user_id):
+def get_category_breakdown(user_id, date_from=None, date_to=None):
     db = get_db()
+    clause, params = date_filter_clause(date_from, date_to)
     try:
         rows = db.execute(
-            "SELECT category, SUM(amount) AS total FROM expenses WHERE user_id = ? GROUP BY category ORDER BY total DESC",
-            (user_id,)
+            "SELECT category, SUM(amount) AS total FROM expenses"
+            " WHERE user_id = ? " + clause
+            + " GROUP BY category ORDER BY total DESC",
+            (user_id,) + params,
         ).fetchall()
 
         if not rows:
